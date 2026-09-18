@@ -1,0 +1,23 @@
+{% extends "consultas/base.html" %}
+{% block content %}
+<h2>Profissionais disponíveis</h2>
+{% if profissionais %}
+<div class="row row-cols-1 row-cols-md-3 g-3 mt-1">
+    {% for p in profissionais %}
+    <div class="col">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">{{ p.usuario.get_full_name|default:p.usuario.username }}</h5>
+                <p class="card-text text-muted">{{ p.especialidade|default:"Especialidade não informada" }}</p>
+            </div>
+            <div class="card-footer bg-white">
+                <a href="{% url 'consulta_create' p.pk %}" class="btn btn-primary btn-sm">Marcar consulta</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="text-muted">Nenhum profissional cadastrado ainda.</p>
+{% endif %}
+{% endblock %}

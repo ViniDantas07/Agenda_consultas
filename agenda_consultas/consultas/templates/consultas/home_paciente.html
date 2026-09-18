@@ -1,0 +1,42 @@
+{% extends "consultas/base.html" %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center">
+    <h2>Olá, {{ perfil|default:user.username }}</h2>
+    <a href="{% url 'profissional_list' %}" class="btn btn-primary">+ Marcar consulta</a>
+</div>
+
+<h5 class="mt-4">Minhas consultas</h5>
+{% if consultas %}
+<table class="table bg-white">
+    <thead>
+        <tr><th>Data</th><th>Horário</th><th>Profissional</th><th>Status</th><th></th></tr>
+    </thead>
+    <tbody>
+        {% for c in consultas %}
+        <tr>
+            <td>{{ c.data|date:"d/m/Y" }}</td>
+            <td>{{ c.hora_inicio|time:"H:i" }}–{{ c.hora_fim|time:"H:i" }}</td>
+            <td>{{ c.profissional }}</td>
+            <td>
+                {% if c.status == "agendada" %}
+                    <span class="badge bg-warning text-dark">Agendada</span>
+                {% else %}
+                    <span class="badge bg-success">Realizada</span>
+                {% endif %}
+            </td>
+            <td>
+                {% if c.status == "agendada" %}
+                <form method="post" action="{% url 'consulta_cancelar' c.pk %}" class="m-0">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Cancelar</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p class="text-muted">Você ainda não marcou nenhuma consulta.</p>
+{% endif %}
+{% endblock %}

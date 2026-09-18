@@ -1,0 +1,34 @@
+{% extends "consultas/base.html" %}
+{% block content %}
+<h2>Marcar consulta com {{ profissional }}</h2>
+
+<div class="row mt-3">
+    <div class="col-md-5">
+        <h6>Disponibilidade cadastrada</h6>
+        <ul class="list-group">
+            {% for d in profissional.disponibilidades.all %}
+            <li class="list-group-item">{{ d.data|date:"d/m/Y" }} — {{ d.hora_inicio|time:"H:i" }} às {{ d.hora_fim|time:"H:i" }}</li>
+            {% empty %}
+            <li class="list-group-item text-muted">Nenhuma disponibilidade cadastrada.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="col-md-7">
+        <h6>Novo agendamento</h6>
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary">Agendar</button>
+            <a href="{% url 'profissional_list' %}" class="btn btn-outline-secondary">Cancelar</a>
+        </form>
+        <p class="text-muted small mt-2">
+            O horário precisa estar dentro de um bloco de disponibilidade acima e não pode
+            conflitar com outra consulta já marcada para este profissional.
+        </p>
+    </div>
+</div>
+{% endblock %}
