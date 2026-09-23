@@ -1,3 +1,5 @@
+from datetime import date
+
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -41,3 +43,13 @@ class ConsultaForm(forms.ModelForm):
             "hora_fim": forms.TimeInput(attrs={"type": "time", "class": "form-control"}),
             "observacoes": forms.Textarea(attrs={"class": "form-control", "rows": 2}),
         }
+
+    def clean_data(self):
+        data = self.cleaned_data.get("data")
+
+        if data and data < date.today():
+            raise forms.ValidationError(
+                "A data da consulta não pode estar no passado."
+            )
+
+        return data
