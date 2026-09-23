@@ -86,8 +86,37 @@ def disponibilidade_delete(request, pk):
 
 @login_required
 def profissional_list(request):
+    busca = request.GET.get("q", "")
+    especialidade = request.GET.get("especialidade", "")
+
     profissionais = Profissional.objects.all()
-    return render(request, "consultas/profissional_list.html", {"profissionais": profissionais})
+
+    if busca:
+        profissionais = profissionais.filter(
+            usuario__username__icontains=busca
+        )
+
+    if especialidade:
+        profissionais = profissionais.filter(
+            especialidade__iexact=especialidade
+        )
+
+    especialidades = (
+        Profissional.objects
+        .exclude(especialidade="")
+        .values_list("especialidade", flat=True)
+        .distinct()
+        .order_by("especialidade")
+    )
+
+    return render(
+        request,
+        "consultas/profissional_list.html",
+        {
+            "profissionais": profissionais,
+            "especialidades": especialidades,
+        },
+    )
 
 
 @login_required

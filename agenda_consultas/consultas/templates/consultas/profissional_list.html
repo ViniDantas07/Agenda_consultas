@@ -1,23 +1,95 @@
 {% extends "consultas/base.html" %}
 {% block content %}
+
 <h2>Profissionais disponíveis</h2>
+
+<form method="get" class="row g-2 mt-3 mb-4">
+
+    <div class="col-md-6">
+        <label for="q" class="form-label">Buscar profissional</label>
+        <input
+            type="text"
+            id="q"
+            name="q"
+            class="form-control"
+            placeholder="Digite o nome do profissional"
+            value="{{ request.GET.q }}"
+        >
+    </div>
+
+    <div class="col-md-4">
+        <label for="especialidade" class="form-label">Especialidade</label>
+        <select
+            id="especialidade"
+            name="especialidade"
+            class="form-select"
+        >
+            <option value="">Todas as especialidades</option>
+
+            {% for item in especialidades %}
+                <option
+                    value="{{ item }}"
+                    {% if request.GET.especialidade == item %}selected{% endif %}
+                >
+                    {{ item }}
+                </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-primary w-100">
+            Buscar
+        </button>
+    </div>
+
+</form>
+
 {% if profissionais %}
+
 <div class="row row-cols-1 row-cols-md-3 g-3 mt-1">
+
     {% for p in profissionais %}
+
     <div class="col">
         <div class="card h-100">
+
             <div class="card-body">
-                <h5 class="card-title">{{ p.usuario.get_full_name|default:p.usuario.username }}</h5>
-                <p class="card-text text-muted">{{ p.especialidade|default:"Especialidade não informada" }}</p>
+
+                <h5 class="card-title">
+                    {{ p.usuario.get_full_name|default:p.usuario.username }}
+                </h5>
+
+                <p class="card-text text-muted">
+                    {{ p.especialidade|default:"Especialidade não informada" }}
+                </p>
+
             </div>
+
             <div class="card-footer bg-white">
-                <a href="{% url 'consulta_create' p.pk %}" class="btn btn-primary btn-sm">Marcar consulta</a>
+
+                <a
+                    href="{% url 'consulta_create' p.pk %}"
+                    class="btn btn-primary btn-sm"
+                >
+                    Marcar consulta
+                </a>
+
             </div>
+
         </div>
     </div>
+
     {% endfor %}
+
 </div>
+
 {% else %}
-<p class="text-muted">Nenhum profissional cadastrado ainda.</p>
+
+<p class="text-muted">
+    Nenhum profissional encontrado com os filtros informados.
+</p>
+
 {% endif %}
+
 {% endblock %}
